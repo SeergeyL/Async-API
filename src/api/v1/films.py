@@ -56,7 +56,6 @@ async def film_search(
 
 
 @router.get('/{film_id}',
-            response_model=FilmDetails,
             summary='Детали кинопроизведения',
             description='Детальная информация по кинопроизведению',
             response_description='Название, рейтинг, описание, жанры и участники фильма',)
