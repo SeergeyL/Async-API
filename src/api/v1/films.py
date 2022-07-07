@@ -1,11 +1,12 @@
 from http import HTTPStatus
+from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
-
-from api.response_description import FILM_NOT_FOUND
+from api.check_auth import auth_required
 from api.paginator import Paginator
-from services.films import FilmService, get_film_service
+from api.response_description import FILM_NOT_FOUND
 from api.v1.response_models import Film, FilmDetails
+from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from services.films import FilmService, get_film_service
 
 router = APIRouter()
 
@@ -59,7 +60,12 @@ async def film_search(
             summary='Детали кинопроизведения',
             description='Детальная информация по кинопроизведению',
             response_description='Название, рейтинг, описание, жанры и участники фильма',)
-async def film_details(film_id: str, film_service: FilmService = Depends(get_film_service)) -> FilmDetails:
+@auth_required
+async def film_details(
+    film_id: str,
+    film_service: FilmService = Depends(get_film_service),
+    authorization: Optional[str] = Header(default=None)
+) -> FilmDetails:
     film = await film_service.get_by_id(film_id)
     if not film:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=FILM_NOT_FOUND)
