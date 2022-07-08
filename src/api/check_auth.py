@@ -10,14 +10,14 @@ async def request(url, headers=None):
     async with aiohttp.ClientSession(headers=headers) as session:
         try:
             async with session.get(url) as response:
-                if response.status == HTTPStatus.UNAUTHORIZED:
+                if response.status != HTTPStatus.OK:
                     message = await response.json()
                     raise HTTPException(
                         status_code=HTTPStatus.UNAUTHORIZED,
                         detail=message
                     )
                 return response.json()
-        except aiohttp.ClientConnectorError as e:
+        except aiohttp.ServerConnectionError as e:
             # В случае возникновения 500 ошибки, предполагается,
             # что пользователь авторизован
             return HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR)
