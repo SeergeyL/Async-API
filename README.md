@@ -25,3 +25,6 @@ cp .env.example .env
 ```
 docker-compose up -d --build
 ```
+
+## Документация
+Swagger документация находится по ручке `/api/openapi`
